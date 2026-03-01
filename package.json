@@ -1,0 +1,22 @@
+{
+  "name": "dauphin",
+  "version": "0.1.0",
+  "description": "A lightweight and clean BitTorrent client",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "dauphin": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test test/**/*.test.js",
+    "test:watch": "node --test --watch test/**/*.test.js"
+  },
+  "keywords": ["torrent", "bittorrent", "p2p", "client"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
