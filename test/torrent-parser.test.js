@@ -2,6 +2,7 @@ import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import crypto from 'crypto';
 import { TorrentParser } from '../src/torrent-parser.js';
 
@@ -11,7 +12,7 @@ describe('TorrentParser', () => {
 
   beforeEach(() => {
     // Create a minimal test torrent file
-    testTorrentPath = path.join('/tmp', 'test-' + Date.now() + '.torrent');
+    testTorrentPath = path.join(os.tmpdir(), 'test-' + Date.now() + '.torrent');
     
     // Create bencode data manually
     const info = {
