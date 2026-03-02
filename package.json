@@ -10,11 +10,34 @@
   "scripts": {
     "start": "node src/index.js",
     "test": "node --test test/**/*.test.js",
-    "test:watch": "node --test --watch test/**/*.test.js"
+    "test:watch": "node --test --watch test/**/*.test.js",
+    "prepare": "chmod +x src/index.js"
   },
-  "keywords": ["torrent", "bittorrent", "p2p", "client"],
-  "author": "",
+  "keywords": [
+    "torrent",
+    "bittorrent",
+    "p2p",
+    "client",
+    "download",
+    "cli",
+    "peer-to-peer",
+    "file-sharing"
+  ],
+  "author": "Your Name",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comatoastuk/dauphin.git"
+  },
+  "homepage": "https://github.com/comatoastuk/dauphin#readme",
+  "bugs": {
+    "url": "https://github.com/comatoastuk/dauphin/issues"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {},
   "engines": {
     "node": ">=18.0.0"
