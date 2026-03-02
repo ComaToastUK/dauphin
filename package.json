@@ -9,8 +9,8 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node --test test/**/*.test.js",
-    "test:watch": "node --test --watch test/**/*.test.js",
+    "test": "node --test test/*.test.js",
+    "test:watch": "node --test --watch test/*.test.js",
     "prepare": "chmod +x src/index.js"
   },
   "keywords": [
