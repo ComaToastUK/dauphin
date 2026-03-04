@@ -160,7 +160,7 @@ async function main() {
     console.log('');
 
     // Start download
-    const downloader = new Downloader(parser, options.outputDir);
+    const downloader = new Downloader(parser, options.outputDir, options.debug);
 
     // Handle Ctrl+C
     process.on('SIGINT', () => {

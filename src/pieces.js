@@ -22,6 +22,7 @@ export class PieceManager {
     // Block tracking (16KB blocks per piece)
     this.blockSize = 16384; // 16 KB
     this.blocks = new Map(); // pieceIndex -> Set of received block offsets
+    this.requestedBlocks = new Map(); // pieceIndex -> Set of requested block offsets
   }
 
   /**
@@ -68,20 +69,27 @@ export class PieceManager {
     if (!this.blocks.has(pieceIndex)) {
       this.blocks.set(pieceIndex, new Set());
     }
+    if (!this.requestedBlocks.has(pieceIndex)) {
+      this.requestedBlocks.set(pieceIndex, new Set());
+    }
 
     const receivedBlocks = this.blocks.get(pieceIndex);
+    const requestedBlocks = this.requestedBlocks.get(pieceIndex);
     const pieceSize = this.getPieceSize(pieceIndex);
     const numBlocks = Math.ceil(pieceSize / this.blockSize);
 
     for (let i = 0; i < numBlocks; i++) {
       const offset = i * this.blockSize;
-      if (!receivedBlocks.has(offset)) {
+      // Skip if already received or already requested
+      if (!receivedBlocks.has(offset) && !requestedBlocks.has(offset)) {
         const length = Math.min(this.blockSize, pieceSize - offset);
+        // Mark as requested
+        requestedBlocks.add(offset);
         return { offset, length };
       }
     }
 
-    return null; // All blocks received for this piece
+    return null; // All blocks received or requested for this piece
   }
 
   /**
@@ -185,8 +193,20 @@ export class PieceManager {
    */
   resetPiece(pieceIndex) {
     this.requested[pieceIndex] = false;
+    this.received[pieceIndex] = false;
+    this.verified[pieceIndex] = false;
     this.pieces[pieceIndex] = null;
     this.blocks.delete(pieceIndex);
+    this.requestedBlocks.delete(pieceIndex);
+  }
+
+  /**
+   * Release piece data from memory after writing to disk
+   */
+  releasePiece(pieceIndex) {
+    this.pieces[pieceIndex] = null;
+    this.blocks.delete(pieceIndex);
+    this.requestedBlocks.delete(pieceIndex);
   }
 }
 

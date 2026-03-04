@@ -43,10 +43,14 @@ export class Peer extends EventEmitter {
   connect(timeout = 10000) {
     return new Promise((resolve, reject) => {
       this.socket = new net.Socket();
+      let settled = false; // Track if promise is already resolved/rejected
       
       const timeoutId = setTimeout(() => {
-        this.socket.destroy();
-        reject(new Error('Connection timeout'));
+        if (!settled) {
+          settled = true;
+          this.socket.destroy();
+          reject(new Error('Connection timeout'));
+        }
       }, timeout);
 
       this.socket.on('connect', () => {
@@ -62,24 +66,40 @@ export class Peer extends EventEmitter {
 
       this.socket.on('error', (error) => {
         clearTimeout(timeoutId);
-        this.emit('error', error);
+        // Only emit error if promise is already settled (connection succeeded earlier)
+        if (settled) {
+          this.emit('error', error);
+        } else {
+          // During connection phase, just reject once
+          settled = true;
+          reject(error);
+        }
       });
 
       this.socket.on('close', () => {
         this.connected = false;
-        this.emit('close');
+        // Only emit close if we successfully connected before
+        if (settled) {
+          this.emit('close');
+        }
       });
 
       this.socket.connect(this.port, this.ip, () => {
         // Wait for handshake response
         const handshakeTimeout = setTimeout(() => {
-          this.socket.destroy();
-          reject(new Error('Handshake timeout'));
+          if (!settled) {
+            settled = true;
+            this.socket.destroy();
+            reject(new Error('Handshake timeout'));
+          }
         }, 5000);
 
         this.once('handshake', () => {
-          clearTimeout(handshakeTimeout);
-          resolve();
+          if (!settled) {
+            clearTimeout(handshakeTimeout);
+            settled = true;
+            resolve();
+          }
         });
       });
     });
